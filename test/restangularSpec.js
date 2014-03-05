@@ -736,4 +736,26 @@ describe("Restangular", function() {
       $httpBackend.flush();
     });
   });
+
+  describe("ODataUrlCreator", function () {
+
+    var odataRestangular;
+
+    beforeEach(function () {
+      odataRestangular = Restangular.withConfig(function (RestangularConfigurer) {
+        RestangularConfigurer.setUrlCreator("odata");
+      });
+    });
+
+    it("uses paranthesis instead of slashes to denote id's", function () {
+      var restangularAccounts = odataRestangular.one("accounts", 123);
+      expect(restangularAccounts.getRestangularUrl()).toEqual("/accounts(123)");
+    });
+
+    it("uses paranthesis instead of slashes to denote id's in nested resources", function () {
+      var restangularSpaces = odataRestangular.one("accounts", 123).one("buildings", 456).all("spaces");
+      expect(restangularSpaces.getRestangularUrl()).toEqual("/accounts(123)/buildings(456)/spaces");
+    });
+
+  });
 });
